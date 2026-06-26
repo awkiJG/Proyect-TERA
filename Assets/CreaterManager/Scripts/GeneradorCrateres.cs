@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.U2D;
 
 // Estructura de datos serializable para poder verla en el inspector si fuera necesario.
 // Almacena la información matemática básica de cada cráter antes de instanciarlo.
@@ -34,6 +35,7 @@ public class GeneradorCrateres : MonoBehaviour
         // Al iniciar el juego, generamos los datos matemáticos y luego instanciamos los visuales.
         GenerarDatosMatematicos();
         InstanciarCratelesVisuales();
+        StartCoroutine(DibujarBordeVisual());
     }
 
     void Update()
@@ -43,6 +45,7 @@ public class GeneradorCrateres : MonoBehaviour
         {
             GenerarDatosMatematicos();
             InstanciarCratelesVisuales();
+            StartCoroutine(DibujarBordeVisual());
         }
     }
 
@@ -225,20 +228,64 @@ public class GeneradorCrateres : MonoBehaviour
             float diametro = crater.radio * 2f;
             // Aplicamos la escala en X e Y (ancho y alto). Mantenemos la escala Z original del prefab.
             craterVisual.transform.localScale = new Vector3(diametro, diametro, craterVisual.transform.localScale.z);
+        }
+    }
 
-            // Como solo es visual, nos aseguramos de que no incluya componentes de colisión por accidente.
-            // Si tiene un Collider2D, lo eliminamos.
-            Collider2D col2D = craterVisual.GetComponent<Collider2D>();
-            if (col2D != null)
+    // Corrutina para sincronizar el spline del SpriteShapeController con el CompositeCollider2D
+    private System.Collections.IEnumerator DibujarBordeVisual()
+    {
+        // Espera un FixedUpdate para que el motor de físicas fusione los colliders hijos
+        yield return new WaitForFixedUpdate();
+
+        // Obtener las referencias al CompositeCollider2D y al SpriteShapeController del mismo objeto
+        CompositeCollider2D compositeCollider = GetComponent<CompositeCollider2D>();
+        SpriteShapeController spriteShapeController = GetComponent<SpriteShapeController>();
+
+        if (compositeCollider == null || spriteShapeController == null)
+        {
+            Debug.LogWarning("No se encontró CompositeCollider2D o SpriteShapeController en este objeto.");
+            yield break;
+        }
+
+        // Acceder al spline y limpiarlo
+        Spline spline = spriteShapeController.spline;
+        spline.Clear();
+
+        // Verificar que pathCount sea mayor a 0 y tomar el path 0
+        if (compositeCollider.pathCount > 0)
+        {
+            int cantidadPuntos = compositeCollider.GetPathPointCount(0);
+            
+            // Itera sobre la cantidad de puntos de ese path
+            for (int i = 0; i < cantidadPuntos; i++)
             {
-                Destroy(col2D);
-            }
-            // Si tiene un Collider 3D, también lo eliminamos.
-            Collider col3D = craterVisual.GetComponent<Collider>();
-            if (col3D != null)
-            {
-                Destroy(col3D);
+                // Usa GetPathPoint(0, i) para obtener cada vértice (Vector2)
+                Vector2 vertice = GetPathPoint(0, i);
+
+                // Inserta cada vértice en el spline
+                spline.InsertPointAt(i, vertice);
+
+                // Configura el modo de las tangentes del spline a continuo
+                spline.SetTangentMode(i, ShapeTangentMode.Continuous);
             }
         }
+    }
+
+    // Método auxiliar para obtener un vértice específico de un path en el CompositeCollider2D,
+    // emulando GetPathPoint que no existe nativamente en la API estándar de Unity.
+    private Vector2 GetPathPoint(int pathIndex, int pointIndex)
+    {
+        CompositeCollider2D compositeCollider = GetComponent<CompositeCollider2D>();
+        if (compositeCollider == null) return Vector2.zero;
+
+        int pointCount = compositeCollider.GetPathPointCount(pathIndex);
+        Vector2[] points = new Vector2[pointCount];
+        compositeCollider.GetPath(pathIndex, points);
+
+        if (pointIndex >= 0 && pointIndex < points.Length)
+        {
+            return points[pointIndex];
+        }
+        return Vector2.zero;
     }
 }

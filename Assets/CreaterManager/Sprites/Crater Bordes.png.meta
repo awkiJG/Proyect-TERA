@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: f773c9e3c2ec1f3418f228616004af32
+guid: 1b643ec34692dc74c88cb092ca6fc3c0
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6741202588219721152
-    second: CraterBorde_0
+      213: -7380994562622634244
+    second: Crater Bordes_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: CraterBorde_0
+      name: Crater Bordes_0
       rect:
         serializedVersion: 2
-        x: 14
-        y: 5
-        width: 129
-        height: 89
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
+        x: 12
+        y: 7
+        width: 134
+        height: 91
+      alignment: 9
+      pivot: {x: 0.5018011, y: 0.7943794}
+      border: {x: 10, y: 0, z: 9, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 04a383266ff6272a0800000000000000
-      internalID: -6741202588219721152
+      spriteID: cf6c9cd2d80719990800000000000000
+      internalID: -7380994562622634244
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 092c0a310c3a72c45878a96257b1c225
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      CraterBorde_0: -6741202588219721152
+      Crater Bordes_0: -7380994562622634244
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
